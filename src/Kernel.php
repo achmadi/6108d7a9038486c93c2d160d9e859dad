@@ -11,6 +11,9 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Erahma\FutureFramework\Event\RequestEvent;
+
 class Kernel implements HttpKernelInterface
 {
     public const MAIN_REQUEST = 1;
@@ -24,10 +27,12 @@ class Kernel implements HttpKernelInterface
 
     /** @var RouteCollection */
     protected $routes;
+    protected $dispatcher;
 
     public function __construct()
     {
         $this->routes = new RouteCollection();
+        $this->dispatcher = new EventDispatcher();
     }
     
     public function handle(Request $request, int $type = Kernel::MAIN_REQUEST, bool $catch = true) : Response
@@ -37,6 +42,13 @@ class Kernel implements HttpKernelInterface
         $context->fromRequest($request);
         
         $matcher = new UrlMatcher($this->routes, $context);
+
+        /*  */
+        $event = new RequestEvent();
+        $event->setRequest($request);
+
+        $this->dispatcher->dispatch( $event, 'request');
+        /*  */
 
         try {
             // $attributes = $matcher->match($request->getPathInfo());
@@ -62,4 +74,14 @@ class Kernel implements HttpKernelInterface
             array('controller' => $controller)
         ));
     }
+
+    public function on($event, $callback)
+    {
+        $this->dispatcher->addListener($event, $callback);
+    }
+
+    public function fire($event)
+    {
+	    return $this->dispatcher->dispatch($event);
+	}
 }
