@@ -69,6 +69,9 @@ USER laravel
 # Add application
 COPY --chown=laravel ./ /var/www/html/
 
+# Install composer from the official image
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
 # Expose the port nginx is reachable on
 EXPOSE 8080
 
