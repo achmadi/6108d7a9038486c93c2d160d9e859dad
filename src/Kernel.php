@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Erahma\FutureFramework\Event\RequestEvent;
+use Erahma\FutureFramework\Storages\EloquentManager;
 
 class Kernel implements HttpKernelInterface
 {
@@ -29,10 +30,19 @@ class Kernel implements HttpKernelInterface
     protected $routes;
     protected $dispatcher;
 
-    public function __construct()
+    public function __construct($config = [])
     {
         $this->routes = new RouteCollection();
         $this->dispatcher = new EventDispatcher();
+
+        EloquentManager::init(
+            $config['driver']??null,
+            $config['host']??null,
+            $config['database']??null,
+            $config['username']??null,
+            $config['password']??null
+        );
+        
     }
     
     public function handle(Request $request, int $type = Kernel::MAIN_REQUEST, bool $catch = true) : Response

@@ -34,7 +34,16 @@ $loader = require '../vendor/autoload.php';
     $request = Request::createFromGlobals();
     
     
-    $app = new Erahma\FutureFramework\Kernel();
+    $app = new Erahma\FutureFramework\Kernel(
+        [
+            'driver' =>  $_ENV['DB_CONNECTION'],
+            // 'host' =>  $_ENV['DB_HOST'].':'.$_ENV['DB_PORT'],
+            'host' =>  $_ENV['DB_HOST'],
+            'database' =>  $_ENV['DB_DATABASE'],
+            'username' =>  $_ENV['DB_USERNAME'],
+            'password' =>  $_ENV['DB_PASSWORD'],
+        ]
+    );
     
     $app->map('/', function () {
         $response = new Response();
