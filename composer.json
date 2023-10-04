@@ -13,5 +13,7 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "symfony/http-foundation": "2.5.*"
+    }
 }
