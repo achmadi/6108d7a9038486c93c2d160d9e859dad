@@ -47,7 +47,8 @@ final class EloquentManager
             Capsule::schema()->create('messages', function ($table) {
                 $table->increments('id');
                 $table->integer('user_id');
-                $table->string('email');
+                $table->integer('recipient_id');
+                $table->string('recipient_email');
                 $table->string('message');
                 $table->string('is_read');
                 $table->timestamps();
@@ -57,19 +58,29 @@ final class EloquentManager
 
     public static function seeder() {
         if (is_null(User::first())) {
+            
             $user = User::create([
-                'name'=>  'Achmadi',
-                'email'=>  'test@gmail.com',
+                'name'=>  'admin',
+                'email'=>  'admin@gmail.com',
                 'password'=>  'password',
-                'user_image'=>  'Achmadi',
-                'api_key'=>  'api_key',
+                'user_image'=>  'htpp://......',
+                'api_key'=>  uniqid(),
+            ]);
+            $user2 = User::create([
+                'name'=>  'client_1',
+                'email'=>  'client_1@gmail.com',
+                'password'=>  'password',
+                'user_image'=>  'htpp://......',
+                'api_key'=>  uniqid(),
             ]);
             $user ->messages()->create([
-                'user_id'=> '',
-                'email'=> $user ->email,
-                'message'=> 'TEst Messate',
+                'recipient_id'=> $user2->id,
+                'recipient_email'=> $user2->email,
+                'message'=> 'First Message ',
                 'is_read'=> 0,
             ]);
+
+           
         }
     }
 }
