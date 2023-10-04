@@ -1,0 +1,17 @@
+{
+    "name": "erahma/future-framework",
+    "description": "Future Fremework is simple framework, lightweight, fast, interoptable",
+    "license": "create common licensi",
+    "autoload": {
+        "psr-4": {
+            "Erahma\\FutureFramework\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Achmadi"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
