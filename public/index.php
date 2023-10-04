@@ -9,6 +9,7 @@ $loader = require '../vendor/autoload.php';
     $loader->register();
 
     use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\HttpFoundation\Response;
 
     require '../src/Kernel.php';
   
@@ -17,6 +18,9 @@ $loader = require '../vendor/autoload.php';
     // Our framework is now handling itself the request
     $app = new Erahma\FutureFramework\Kernel();
     
+    $app->map('/hello/{name}', function ($name) {
+		return new Response('Hello '.$name);
+	});
     
     $response = $app->handle($request);
     $response->send();
