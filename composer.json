@@ -18,6 +18,7 @@
         "symfony/http-kernel": "^6.3",
         "symfony/routing": "^6.3",
         "symfony/event-dispatcher": "^6.3",
-        "firebase/php-jwt": "^6.8"
+        "firebase/php-jwt": "^6.8",
+        "symfony/dotenv": "^6.3"
     }
 }
