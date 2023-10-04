@@ -1,0 +1,42 @@
+version: '3.5'
+
+networks:
+  un-fw:
+
+
+services:
+  app:
+    container_name: un-fw
+    build:
+      context: .
+      # dockerfile: Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1001}
+    volumes:
+      - ".:/var/www/html"
+      # - "./storage:/var/www/html/storage"
+      # - ./.env:/var/www/html/.env:delegated
+    ports:
+      - 8090:8080
+    depends_on:
+      - postgres
+    networks:
+      - un-fw
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - 5433:5432
+    networks:
+      - un-fw
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8091:8080
+    networks:
+      - un-fw
