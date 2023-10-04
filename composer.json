@@ -15,6 +15,7 @@
     "minimum-stability": "stable",
     "require": {
         "symfony/http-foundation": "^6.3",
-        "symfony/http-kernel": "^6.3"
+        "symfony/http-kernel": "^6.3",
+        "symfony/routing": "^6.3"
     }
 }
