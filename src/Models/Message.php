@@ -7,7 +7,8 @@ class Message extends Model
 {
     protected $fillable = [
         'user_id',
-        'email',
+        'recipient_id',
+        'recipient_email',
         'message',
         'is_read',
     ];

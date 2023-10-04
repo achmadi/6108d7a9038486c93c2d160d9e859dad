@@ -16,4 +16,7 @@ class User extends Model
     function messages() {
         return $this->hasMany(Message::class, 'user_id');
     }
+    function incomingMessages() {
+        return $this->hasMany(Message::class, 'recipient_id');
+    }
 }
