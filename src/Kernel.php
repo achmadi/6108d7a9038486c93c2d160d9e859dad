@@ -59,8 +59,9 @@ class Kernel implements HttpKernelInterface
             $event = new RequestEvent($this);
             $event->setRequest($request);
             $this->dispatcher->dispatch( $event, 'request');
+            
             /*  */
-           
+            
             $attributes = $matcher->match($request->getPathInfo());
             
 			$controller = $attributes['controller'];
@@ -69,9 +70,17 @@ class Kernel implements HttpKernelInterface
 			unset($attributes['middlewares']);
             
             $data = [];
+            
             if ($request->getContent() !== '' ) {
-                $data = $request->toArray();
+                $post = $request->toArray();
+                $data = array_merge($data, $post);
             }
+            
+            $additionalPayloads = $request->request->all();
+            $data = array_merge($data, $additionalPayloads);
+
+            $queryData = $request->query->all();
+            $data = array_merge($data, $queryData);
             
 			$response = call_user_func_array($controller, array_merge($attributes, ['data' => $data]));
 
