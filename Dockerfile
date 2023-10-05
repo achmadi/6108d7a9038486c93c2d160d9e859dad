@@ -36,6 +36,7 @@ RUN apk add --no-cache \
   php81-pdo_mysql \
   php81-pdo_pgsql \
   php81-pdo_sqlite \
+  php81-bcmath \
   php82-pecl-redis \
   supervisor
 
