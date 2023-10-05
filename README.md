@@ -15,7 +15,7 @@ Framework ini dibuat dengan beberapa library php handal dan stabil,  yang juga b
 ## How to run
 
 ```
-$ git clone https://github.com/achmadi/6108d7a9038486c93c2d160d9e859dad.git future-framework && cd future-framework &&  docker-compose up 
+$ git clone https://github.com/achmadi/6108d7a9038486c93c2d160d9e859dad.git future-framework && cd future-framework && composer install &&  docker-compose up 
 ```
 ## Demo Credentials
 
