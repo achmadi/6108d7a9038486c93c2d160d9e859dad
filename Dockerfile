@@ -34,6 +34,7 @@ RUN apk add --no-cache \
   php81-xmlwriter \
   php81-simplexml \
   php81-pdo_mysql \
+  php81-pdo_pgsql \
   php81-pdo_sqlite \
   php82-pecl-redis \
   supervisor
@@ -70,7 +71,9 @@ USER laravel
 COPY --chown=laravel ./ /var/www/html/
 
 # Install composer from the official image
-COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.6.4 /usr/bin/composer /usr/bin/composer
+
+RUN composer install
 
 # Expose the port nginx is reachable on
 EXPOSE 8080
