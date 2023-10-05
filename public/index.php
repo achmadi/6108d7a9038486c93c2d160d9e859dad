@@ -21,8 +21,9 @@ $loader = require '../vendor/autoload.php';
     use Firebase\JWT\BeforeValidException;
     use Firebase\JWT\ExpiredException;
     use DomainException;
+use Erahma\FutureFramework\Models\Message;
 use Erahma\FutureFramework\Models\User;
-use InvalidArgumentException;
+    use InvalidArgumentException;
     use UnexpectedValueException;
 
 
@@ -58,9 +59,139 @@ use InvalidArgumentException;
         return $response;
 	});
 
-    /* $app->map('/hello/{name}', function ($name) {
-		return new Response('Hello '.$name);
-	}); */
+    $app->map('/api/v1', function ($data) {
+		return new Response('Hello api ');
+	}, ['auth']);
+    
+    $app->map('/api/v1/message/send', function ($data) {
+        $response = new Response();
+        $content = [ 'data' => [], 'message'=>'Sending message, success.'];
+        
+        try {
+
+            $sender = $data['payloads']['userName'];
+            $accountSender = User::where('email', $sender)->first();
+            
+            $recipient_email = $data['recipient_email']??"";
+            $message = $data['message']??"";
+            $recipent = User::where('email', $recipient_email)->first();
+            if (is_null($recipent)) {
+                throw new Exception("Unknown recipient email", 1);
+                
+            }
+    
+            $accountSender->messages()->create([
+                'recipient_id' => $recipent->id,
+                'recipient_email' => $recipient_email,
+                'message' => $message,
+                'is_read' => 0,
+            ]);
+
+            $content['data'] =  $accountSender->messages->toArray();
+            
+            $response->setContent(json_encode($content));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        } catch (\Throwable $th) {
+            
+            $content['message'] = $th->getMessage();
+            $response->setContent(json_encode($content));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        
+		return new Response('send mssage ');
+	}, ['auth'], ['POST']);
+    
+    $app->map('/api/v1/message/out', function ($data) {
+        
+        $response = new Response();
+        $content = [ 'data' => [], 'message'=>'Messaget sent, success.'];
+        
+        try {
+
+            $sender = $data['payloads']['userName'];
+            $accountSender = User::where('email', $sender)->with('messages')->first();
+            
+            $content['data'] = $accountSender->messages->toArray();
+            
+            $response->setContent(json_encode($content));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        } catch (\Throwable $th) {
+            
+            $content['message'] = 'Messaget sent, error : '.$th->getMessage();
+            $response->setContent(json_encode($content));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        
+		return new Response('send mssage ');
+	}, ['auth'], ['GET']);
+
+      $app->map('/api/v1/message/in', function ($data) {
+        $response = new Response();
+        $content = [ 'data' => [], 'message'=>'Message incoming, success.'];
+        
+        try {
+            
+            $sender = $data['payloads']['userName'];
+            
+            $accountSender = User::where('email', $sender)->with('incomingMessages')->first();
+            
+            $content['data'] = $accountSender->incomingMessages->toArray();
+            
+            $response->setContent(json_encode($content));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        } catch (\Throwable $th) {
+            
+            $content['message'] = $th->getMessage();
+            $response->setContent(json_encode($content));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        
+		return new Response('send mssage ');
+	}, ['auth'], ['GET']);
+    
+    $app->map('/api/v1/message/{id}', function ($id, $data) {
+        
+        $response = new Response();
+        $content = [ 'data' => [], 'message'=>'success'];
+        
+        try {
+
+            $reader = $data['payloads']['userName'];
+            
+            $message = Message::
+                where('recipient_email', $reader)
+                -> where('id', (int) $id )->first();
+            if (is_null($message)) {
+                $content['message'] = 'Invalid message';
+                $response->setContent(json_encode($content));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+            }
+
+            $message->is_read = 1;
+            $message->save();
+            
+            $content['data'] = $message->toArray();
+            
+            $response->setContent(json_encode($content));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        } catch (\Throwable $th) {
+            
+            $content['message'] = $th->getMessage();
+            $response->setContent(json_encode($content));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        
+		return new Response('send mssage ');
+	}, ['auth'], ['GET']);
 
     $app->map('/refresh-api-key', function ( $data) {
         $result = [ 'code' => 400, 'api_key' => null, 'message' => 'failed', ];
@@ -123,9 +254,7 @@ use InvalidArgumentException;
 
 	}, [], ['POST']);
 
-    $app->map('/api/v1', function ($data) {
-		return new Response('Hello api ');
-	}, ['auth']);
+   
 
 
     $app->registerMiddleware('auth', function (Request $request, RouteCollection $route )  {
@@ -143,10 +272,11 @@ use InvalidArgumentException;
             try {
                 $jwt = $matches[1]??false;
 
-                $token = JWT::decode($jwt, $secretKey);
-                $now = new DateTimeImmutable();
+                $payload = (array) JWT::decode($jwt, $secretKey);
+                $request->request->set( 'payloads', $payload );
                 
-                return true;
+                
+                // $now = new DateTimeImmutable();
                 /* if (($token?->iss??'') !== $serverName
                     || $token?->nbf??'' > $now->getTimestamp() 
                     || $token?->exp??0 < $now->getTimestamp() 
