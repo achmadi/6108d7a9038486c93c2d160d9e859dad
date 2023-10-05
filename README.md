@@ -6,6 +6,7 @@ Framework ini dibuat dengan beberapa library php handal dan stabil,  yang juga b
 ## Requirement 
 - min php 8.1
 - postgresql
+- docker
 - php library : symfony/http-foundation, symfony/http-kernel, symfony/routing, symfony/event-dispatcher, firebase/php-jwt, symfony/dotenv, illuminate/database,
 
 ## Development Enviroment 
@@ -14,7 +15,7 @@ Framework ini dibuat dengan beberapa library php handal dan stabil,  yang juga b
 ## How to run
 
 ```
-docker-compose up 
+$ git clone https://github.com/achmadi/6108d7a9038486c93c2d160d9e859dad.git future-framework && cd future-framework &&  docker-compose up 
 ```
 ## Demo Credentials
 
