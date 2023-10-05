@@ -23,6 +23,7 @@ services:
       - postgres
     networks:
       - un-fw
+    entrypoint: sh -c "composer install"
   postgres:
     image: postgres
     restart: always
