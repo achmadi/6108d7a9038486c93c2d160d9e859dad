@@ -58,3 +58,5 @@ services:
     volumes:
       - rabbitmq-lib:/var/lib/rabbitmq/
       - rabbitmq-log:/var/log/rabbitmq/
+    networks:
+      - un-fw
