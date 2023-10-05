@@ -2,6 +2,11 @@ version: '3.5'
 
 networks:
   un-fw:
+volumes:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local
 
 
 services:
@@ -41,3 +46,15 @@ services:
       - 8091:8080
     networks:
       - un-fw
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq-local'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    # volumes:
+    #     - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+    #     - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq/
