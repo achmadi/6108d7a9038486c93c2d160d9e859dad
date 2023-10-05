@@ -64,14 +64,14 @@ final class EloquentManager
                 'email'=>  'admin@gmail.com',
                 'password'=>  'password',
                 'user_image'=>  'htpp://......',
-                'api_key'=>  uniqid(),
+                'api_key'=>  uniqid(), //651ddc4c7fea8
             ]);
             $user2 = User::create([
                 'name'=>  'client_1',
                 'email'=>  'client_1@gmail.com',
                 'password'=>  'password',
                 'user_image'=>  'htpp://......',
-                'api_key'=>  uniqid(),
+                'api_key'=>  uniqid(), //651ddc4c811b4
             ]);
             $user ->messages()->create([
                 'recipient_id'=> $user2->id,

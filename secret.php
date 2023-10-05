@@ -41,3 +41,5 @@ TTqo1SCSH2pooJl9O8at6kkRYsrZWwsKlOFE2LUce7ObnXsYihStBUDoeBQlGG/B
 wQIDAQAB
 -----END PUBLIC KEY-----
 EOD;
+
+$serverName = "your.domain.name";

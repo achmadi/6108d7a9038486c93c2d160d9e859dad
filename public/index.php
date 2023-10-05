@@ -9,6 +9,7 @@ $loader = require '../vendor/autoload.php';
     $loader->register();
 
     use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\Routing\RouteCollection;
     use Symfony\Component\HttpFoundation\Response;
 
     use Erahma\FutureFramework\Event\RequestEvent;
@@ -20,7 +21,8 @@ $loader = require '../vendor/autoload.php';
     use Firebase\JWT\BeforeValidException;
     use Firebase\JWT\ExpiredException;
     use DomainException;
-    use InvalidArgumentException;
+use Erahma\FutureFramework\Models\User;
+use InvalidArgumentException;
     use UnexpectedValueException;
 
 
@@ -45,7 +47,8 @@ $loader = require '../vendor/autoload.php';
         ]
     );
     
-    $app->map('/', function () {
+    $app->map('/', function ($data) {
+        
         $response = new Response();
         $response->setContent(json_encode([
             'code' => 200,
@@ -55,52 +58,104 @@ $loader = require '../vendor/autoload.php';
         return $response;
 	});
 
-    $app->map('/hello/{name}', function ($name) {
+    /* $app->map('/hello/{name}', function ($name) {
 		return new Response('Hello '.$name);
-	});
+	}); */
 
-    $app->map('/test', function () {
-		return new Response('Hello ');
-	});
-    $app->map('/api/v1', function () {
-		return new Response('elllo api ');
-	});
+    $app->map('/refresh-api-key', function ( $data) {
+        $result = [ 'code' => 400, 'api_key' => null, 'message' => 'failed', ];
+        $user = User::
+            where('email', $data['email']??'')
+            ->where('password', $data['password']??'')
+            ->first();
 
-    $app->on('request', function (RequestEvent $event) {
+        if ($user) {
+            $user->api_key = uniqid();
+            $user->save();
+            $result = [ 'code' => 200, 'api_key' => $user->api_key, 'message' => 'success', ];
+        }
 
+		$response = new Response();
+        $response->setContent(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+	}, [], 'POST');
+
+    $app->map('/generate-token/{api_key}', function ($api_key, $data) {
+
+        require '../secret.php';
+        $user = User::where('api_key', $api_key)->first();
+
+        $result = [ 'code' => 200, 'token' => null, 'message' => null, ];
+
+        if ($user) {
+
+            $issuedAt   = new DateTimeImmutable();
+            $expire     = (clone $issuedAt)->modify('+'.((int) ($data['duration']??1)).' minutes')->getTimestamp();      // Add 60 seconds
+            
+            $username   = $user->email;                                           // Retrieved from filtered POST data
+    
+            $payload = [
+                'iat'  => $issuedAt->getTimestamp(),         // Issued at: time when the token was generated
+                'iss'  => $serverName,                       // Issuer
+                'nbf'  => $issuedAt->getTimestamp(),         // Not before
+                'exp'  => $expire,                           // Expire
+                'userName' => $username,                     // User name
+            ];
+    
+            $jwt = JWT::encode($payload, $privateKey, 'RS256');
+            $result['token'] = $jwt;
+            $result['message'] = 'success';
+            
+            $response = new Response();
+            $response->setContent(json_encode($result));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+
+        $result['code'] = 400;
+        $result['message'] = 'Uknown api key';
+
+        $response = new Response();
+        $response->setContent(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+
+	}, [], ['POST']);
+
+    $app->map('/api/v1', function ($data) {
+		return new Response('Hello api ');
+	}, ['auth']);
+
+
+    $app->registerMiddleware('auth', function (Request $request, RouteCollection $route )  {
         require '../secret.php';
         $secretKey = new Key($publicKey, 'RS256');
         
-		// let's assume a proper check here
-		if ('/admin' == $event->getRequest()->getPathInfo()) {
-			echo 'Access Denied Admin!';
-			exit;
-		}
-		if (str_starts_with($event->getRequest()->getPathInfo(), '/api/v1')) {
+		if (str_starts_with($request->getPathInfo(), '/api/v1')) {
             
-            if (! preg_match('/Bearer\s(\S+)/', $event->getRequest()->headers->get('Authorization')??'', $matches)) {
+            if (! preg_match('/Bearer\s(\S+)/', $request->headers->get('Authorization')??'', $matches)) {
                 header('HTTP/1.0 400 Bad Request');
                 echo 'Token not found in request';
                 exit;
             }
 			
-
             try {
                 $jwt = $matches[1]??false;
 
                 $token = JWT::decode($jwt, $secretKey);
                 $now = new DateTimeImmutable();
-                $serverName = "example.org";
                 
-                if (($token?->iss??'') !== $serverName
-                    /* || $token?->nbf??'' > $now->getTimestamp() 
-                    || $token?->exp??0 < $now->getTimestamp() */
+                return true;
+                /* if (($token?->iss??'') !== $serverName
+                    || $token?->nbf??'' > $now->getTimestamp() 
+                    || $token?->exp??0 < $now->getTimestamp() 
                     )
                 {
                     header('HTTP/1.1 401 Unauthorized');
                     echo '401 Unauthorized';
                     exit;
-                }
+                } */
             } catch (InvalidArgumentException $e) {
                 header('HTTP/1.1 401 Unauthorized');
                 echo '401 Unauthorized InvalidArgumentException';
@@ -129,6 +184,7 @@ $loader = require '../vendor/autoload.php';
                 // provided JWT is trying to be used before "nbf" claim OR
                 // provided JWT is trying to be used before "iat" claim.
             } catch (ExpiredException $e) {
+                
                 header('HTTP/1.1 401 Unauthorized');
                 echo '401 Unauthorized ExpiredException';
                 exit;
@@ -144,36 +200,13 @@ $loader = require '../vendor/autoload.php';
             }
             
 		}
+        
+    });
 
-		
-        if (str_starts_with($event->getRequest()->getPathInfo(), '/api/test')) {
+    $app->on('request', function (RequestEvent $event) {
+        $kernel = $event->getKernel();
+        return $kernel->applyMiddleware($event->getRequest());
 
-            $payload = [
-                'iss' => 'example.org',
-                'aud' => 'example.com',
-                'iat' => 1356999524,
-                'nbf' => 1357000000,
-                'data'=> [
-                    'email'=> 'test@gmail.com',
-                    'message'=> 'your message'
-                ]
-            ];
-
-            $jwt = JWT::encode($payload, $privateKey, 'RS256');
-            echo "Encode:\n" . print_r($jwt, true) . "\n";
-
-            $decoded = JWT::decode($jwt, $secretKey);
-
-            /*
-            NOTE: This will now be an object instead of an associative array. To get
-            an associative array, you will need to cast it as such:
-            */
-
-            $decoded_array = (array) $decoded;
-            echo "Decode:\n" . print_r($decoded_array, true) . "\n";
-            /* ================ */
-			exit;
-		}
 	});
     
     $response = $app->handle($request);

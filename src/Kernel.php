@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Erahma\FutureFramework\Event\RequestEvent;
 use Erahma\FutureFramework\Storages\EloquentManager;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 class Kernel implements HttpKernelInterface
 {
@@ -47,42 +48,58 @@ class Kernel implements HttpKernelInterface
     
     public function handle(Request $request, int $type = Kernel::MAIN_REQUEST, bool $catch = true) : Response
     {
-        // create a context using the current request
-        $context = new RequestContext();
-        $context->fromRequest($request);
-        
-        $matcher = new UrlMatcher($this->routes, $context);
-
-        /*  */
-        $event = new RequestEvent();
-        $event->setRequest($request);
-
-        $this->dispatcher->dispatch( $event, 'request');
-        /*  */
-
         try {
-            // $attributes = $matcher->match($request->getPathInfo());
-            // $controller = $attributes['controller'];
-            // $response = $controller();
+            // create a context using the current request
+            $context = new RequestContext();
+            $context->fromRequest($request);
+            
+            $matcher = new UrlMatcher($this->routes, $context);
+
+            /* Apply Event Request */
+            $event = new RequestEvent($this);
+            $event->setRequest($request);
+            $this->dispatcher->dispatch( $event, 'request');
+            /*  */
+           
             $attributes = $matcher->match($request->getPathInfo());
+            
 			$controller = $attributes['controller'];
 			unset($attributes['controller']);
 			unset($attributes['_route']);
+			unset($attributes['middlewares']);
             
-			$response = call_user_func_array($controller, $attributes);
+            $data = [];
+            if ($request->getContent() !== '' ) {
+                $data = $request->toArray();
+            }
+            
+			$response = call_user_func_array($controller, array_merge($attributes, ['data' => $data]));
 
         } catch (ResourceNotFoundException $e) {
-            $response = new Response('Not found!', Response::HTTP_NOT_FOUND);
+
+            $response = new Response('Not found! (ResourceNotFoundException)', Response::HTTP_NOT_FOUND);
+
+        }catch (MethodNotAllowedException $e) {
+
+            $response = new Response('Not found! (MethodNotAllowedException)', Response::HTTP_NOT_FOUND);
+
+        } catch (\Throwable $th) {
+            
+            $response = new Response("Internal server error! (".$th->getMessage().")", Response::HTTP_NOT_FOUND);
+
         }
 
         return $response;
+
     }
 
-    public function map($path, $controller) {
-        $this->routes->add($path, new Route(
+    public function map($path, $controller, $middlewares = [], string|array $methods= 'GET') {
+        $route = new Route(
             $path,
-            array('controller' => $controller)
-        ));
+            array_merge(array('controller' => $controller), [ 'middlewares' => $middlewares])
+        );
+        $route->setMethods($methods);
+        $this->routes->add($path, $route);
     }
 
     public function on($event, $callback)
@@ -93,5 +110,27 @@ class Kernel implements HttpKernelInterface
     public function fire($event)
     {
 	    return $this->dispatcher->dispatch($event);
+	}
+
+    public $middlewares = [];
+    
+    public function registerMiddleware($name, callable $callback)
+    {
+	    $this->middlewares[$name] = $callback;
+	}
+
+    public function applyMiddleware($request)
+    {
+        $context = new RequestContext();
+        $context->fromRequest($request);
+        
+        $matcher = new UrlMatcher($this->routes, $context);
+        $attributes = $matcher->match($request->getPathInfo());
+        $shipMiddlewares = $attributes['middlewares'];
+        foreach ($shipMiddlewares as $midName) {
+            if ($callback = $this->middlewares[$midName]??false) {
+                $callback($request, $this->routes);
+            }
+        }
 	}
 }
