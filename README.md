@@ -27,3 +27,17 @@ docker-compose up
 ## Testing 
 
 Kami telah menyediakan  [Postman collection](https://github.com/achmadi/6108d7a9038486c93c2d160d9e859dad/blob/master/future-framework.postman_collection.json) pada repository ini yang siap anda import dan run.
+
+## Sending Message Flows 
+
+1. Pendaftaran user 
+2. User memperoleh akun dan api_key
+3. User generate token
+4. User get email member account
+5. User sending message with email recipient + token 
+6. system  menyimpannya ke dalam db + mendaftarkan antrian notifikasi ke penerima kedalam message broker 
+7. message broker mengirim notifikasi ke pengguna yang online 
+8. pengguna membuka notifikasi dan membuat isi pesan dan menandai pesan telah dibuka. 
+9. Selesai ...
+
+## Demo Endpoints 
