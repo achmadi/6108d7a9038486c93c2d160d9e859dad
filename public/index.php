@@ -21,6 +21,7 @@ $loader = require '../vendor/autoload.php';
     use Firebase\JWT\BeforeValidException;
     use Firebase\JWT\ExpiredException;
     use DomainException;
+use Erahma\FutureFramework\MessageBroker;
 use Erahma\FutureFramework\Models\Message;
 use Erahma\FutureFramework\Models\User;
     use InvalidArgumentException;
@@ -88,6 +89,8 @@ use Erahma\FutureFramework\Models\User;
             ]);
 
             $content['data'] =  $accountSender->messages->toArray();
+
+            $broker = (new MessageBroker())->sendMessage($message)->close();
             
             $response->setContent(json_encode($content));
             $response->headers->set('Content-Type', 'application/json');
