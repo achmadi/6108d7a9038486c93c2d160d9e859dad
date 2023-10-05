@@ -1,0 +1,280 @@
+{
+	"info": {
+		"_postman_id": "dcc62e36-5e1f-4097-8607-3eafd9e86903",
+		"name": "Future Framework",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24845056"
+	},
+	"item": [
+		{
+			"name": "Authenticated",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2OTY1MTQ0NDgsImlzcyI6InlvdXIuZG9tYWluLm5hbWUiLCJuYmYiOjE2OTY1MTQ0NDgsImV4cCI6MTY5NjUyMDQ0OCwidXNlck5hbWUiOiJhZG1pbkBnbWFpbC5jb20ifQ.KGFhLeNudxj7XInXtVEW_Ruzy3H81T0B_rEZNI5gOvZ8laHRI8Gm0HlN22Xb-ScpUusYNu3eG2GTOZKHrnab1aDS3M2ieGyz4T6nw4iXsrKJDMoG2f2t7tAiHHZmO5wN61SKIo4L7AZJBzCRrdvLpl5hklvIhfMlqqXgv2kRpA1-oKr0zjQ6TJTGURfb5fjvaua0vBzcFHLMnkfNhkea6cib6Rk0ko_lpEfTjvF0D5nkh6g96TeBxLhOX4xtOqfO3tW4-oUzS6qptHPDanlw1X0Wuu-tvu3Oy_bFFjHFEIgIfg6rGRJlMZkx8fa28vCrhauYIaan8V8TtoAgtqAXqg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8090/api/v1?test=dfaf",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"api",
+						"v1"
+					],
+					"query": [
+						{
+							"key": "test",
+							"value": "dfaf"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Message",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2OTY1MTkxMjcsImlzcyI6InlvdXIuZG9tYWluLm5hbWUiLCJuYmYiOjE2OTY1MTkxMjcsImV4cCI6MTY5NjUyNTEyNywidXNlck5hbWUiOiJjbGllbnRfMUBnbWFpbC5jb20ifQ.ZsiyBhwcOTBx5UYsCKEr9qA2Gz8TioV129cq-d-0d-MmCmG6eYpXsA1BlouwfUN7_9PBwPP-u8rgGEQoMY0go_57ykVSqNsAMsqB5wVkDqyFFg_f_txaGT2ggpAmBIn-WAkceZzY2VCSd7eC4RhzV1a1RoezsxTJZm9iBt13qxpMQBIy7KsGkhYs_PM-xcAwn_KESUWTULZ6GhpaBZt3SbMM5CImHvxQO9JfP-gziUKeJ-Bz9tey-CzqchFmCU9pRaWeZaFegBLijp4rOlRP20mCatLLQMbma1e4ndRd5_8ulb5C5mCM4qQhfElxnVkRtqpsTQR74ghOmv2bpsbKkw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"recipient_email\": \"admin@gmail.com\",\r\n    \"message\": \"Message coba\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8090/api/v1/message/send?querystring=cccc",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"api",
+						"v1",
+						"message",
+						"send"
+					],
+					"query": [
+						{
+							"key": "querystring",
+							"value": "cccc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Message In",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2OTY1MTgwNTcsImlzcyI6InlvdXIuZG9tYWluLm5hbWUiLCJuYmYiOjE2OTY1MTgwNTcsImV4cCI6MTY5NjUyNDA1NywidXNlck5hbWUiOiJjbGllbnRfMUBnbWFpbC5jb20ifQ.gYWylt6199JIEoIUvqFiPfX-Yuyhhh0JDH1RDjmapLDeCJtj8zOoKQZtrDbcfjpWeegtfDZ91pzNrrno9xZJoJmGznIROAJH8SUZdGqSvoMP1bEzcpR00_Glo1Ug8CWSxtwPDTubpu_ZhvAjDmVBdRDDhUDvjG6qs6CKTnXarhihjs1qMYXi3TVNxHPnfGo_EkTseu-3aRfr37KzkyxUKYP27NwUSSD8DfM6W6Hd5p-Jo1lnOWrakh8nUXxElNSZksknqMlvi362uqLsZlq5Ig1wKNDI7iiHdiYFPkIdjffBCa442BN1Ebce2CJ2V1SxHkwDNVy2trvdCbzWVj_LYA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"recipient_email\": \"client_1@gmail.com\",\r\n    \"message\": \"testing messages sdadad\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8090/api/v1/message/in",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"api",
+						"v1",
+						"message",
+						"in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Message Out",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2OTY1MTQ0NDgsImlzcyI6InlvdXIuZG9tYWluLm5hbWUiLCJuYmYiOjE2OTY1MTQ0NDgsImV4cCI6MTY5NjUyMDQ0OCwidXNlck5hbWUiOiJhZG1pbkBnbWFpbC5jb20ifQ.KGFhLeNudxj7XInXtVEW_Ruzy3H81T0B_rEZNI5gOvZ8laHRI8Gm0HlN22Xb-ScpUusYNu3eG2GTOZKHrnab1aDS3M2ieGyz4T6nw4iXsrKJDMoG2f2t7tAiHHZmO5wN61SKIo4L7AZJBzCRrdvLpl5hklvIhfMlqqXgv2kRpA1-oKr0zjQ6TJTGURfb5fjvaua0vBzcFHLMnkfNhkea6cib6Rk0ko_lpEfTjvF0D5nkh6g96TeBxLhOX4xtOqfO3tW4-oUzS6qptHPDanlw1X0Wuu-tvu3Oy_bFFjHFEIgIfg6rGRJlMZkx8fa28vCrhauYIaan8V8TtoAgtqAXqg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"recipient_email\": \"client_1@gmail.com\",\r\n    \"message\": \"testing messages sdadad\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8090/api/v1/message/out",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"api",
+						"v1",
+						"message",
+						"out"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Message Read",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2OTY1MTkxMjcsImlzcyI6InlvdXIuZG9tYWluLm5hbWUiLCJuYmYiOjE2OTY1MTkxMjcsImV4cCI6MTY5NjUyNTEyNywidXNlck5hbWUiOiJjbGllbnRfMUBnbWFpbC5jb20ifQ.ZsiyBhwcOTBx5UYsCKEr9qA2Gz8TioV129cq-d-0d-MmCmG6eYpXsA1BlouwfUN7_9PBwPP-u8rgGEQoMY0go_57ykVSqNsAMsqB5wVkDqyFFg_f_txaGT2ggpAmBIn-WAkceZzY2VCSd7eC4RhzV1a1RoezsxTJZm9iBt13qxpMQBIy7KsGkhYs_PM-xcAwn_KESUWTULZ6GhpaBZt3SbMM5CImHvxQO9JfP-gziUKeJ-Bz9tey-CzqchFmCU9pRaWeZaFegBLijp4rOlRP20mCatLLQMbma1e4ndRd5_8ulb5C5mCM4qQhfElxnVkRtqpsTQR74ghOmv2bpsbKkw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"recipient_email\": \"client_1@gmail.com\",\r\n    \"message\": \"testing messages sdadad\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8090/api/v1/message/5",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"api",
+						"v1",
+						"message",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Root",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2OTY0NTk2NTgsImlzcyI6InlvdXIuZG9tYWluLm5hbWUiLCJuYmYiOjE2OTY0NTk2NTgsImV4cCI6MTY5NjQ2MDAxOCwidXNlck5hbWUiOiJhZG1pbkBnbWFpbC5jb20ifQ.e19_KRAIpnUz7BsbQDkNCNQsqI2M5OB4Ij-A8P4TC2xv3UPcI8rKGhWbH8tn0TmH9TEuhLN1nGbO1nXbOpSAg9JZdfQX-goBQq206JpF1--c2_cLFNUjst_G4TYhISI8306Yf_Bn621We6ZXa84wflx3kwo3AcVes5C5RollpM87Bi2gwPYuL9ZDqWLSiNKD-BWK_NhwNCFKoO4ZshId20rh3_MgmyakdP_oWo2sxnXQtKsukPbmDcKqWWbchjOzRJVrGG6NKGGeOgiGvnYGtKKOj_JuQeBKzu6oLIB1smn-xTdXiH7iOlHbuZLW_SECNLUCqBcVFD1YoMxcoPSgYQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8090",
+					"host": [
+						"localhost"
+					],
+					"port": "8090"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate_token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"duration\": 100\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8090/generate-token/651ecfa0ea093",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"generate-token",
+						"651ecfa0ea093"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "refresh-api-key",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"client_1@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8090/refresh-api-key",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"refresh-api-key"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
